@@ -1,0 +1,1802 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Automation BOT Trading — Hands-Free Execution. Real Results.</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=Barlow+Condensed:wght@300;400;600;700;900&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #050a0e;
+      --surface: #0a1520;
+      --surface2: #0f1e2e;
+      --accent: #00e5ff;
+      --accent2: #00ff88;
+      --accent3: #ff4d6d;
+      --gold: #f4c542;
+      --text: #c8dde8;
+      --text-dim: #5a7a8a;
+      --border: rgba(0,229,255,0.12);
+      --glow: 0 0 40px rgba(0,229,255,0.15);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Barlow Condensed', sans-serif;
+      overflow-x: hidden;
+    }
+
+    /* ─── NOISE OVERLAY ─── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 1000;
+      opacity: 0.35;
+    }
+
+    /* ─── SCROLLBAR ─── */
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 2px; }
+
+    /* ─── NAV ─── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 900;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px 48px;
+      background: linear-gradient(to bottom, rgba(5,10,14,0.95), transparent);
+      backdrop-filter: blur(4px);
+    }
+
+    .nav-logo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.8rem;
+      letter-spacing: 0.15em;
+      color: var(--accent);
+      text-shadow: 0 0 30px rgba(0,229,255,0.5);
+    }
+
+    .nav-logo span { color: var(--accent2); }
+
+    nav ul {
+      display: flex;
+      gap: 36px;
+      list-style: none;
+    }
+
+    nav ul a {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.72rem;
+      letter-spacing: 0.12em;
+      color: var(--text-dim);
+      text-decoration: none;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+
+    nav ul a:hover { color: var(--accent); }
+
+    .nav-cta {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.72rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 10px 24px;
+      border: 1px solid var(--accent);
+      color: var(--accent);
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+
+    .nav-discord {
+      background: #5865F2;
+      border-color: #5865F2;
+      color: #fff;
+      margin-right: 8px;
+    }
+    .nav-discord:hover { background: #4752c4; border-color: #4752c4; color: #fff; }
+    .btn-discord {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.8rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      padding: 16px 40px;
+      background: #5865F2;
+      color: #fff;
+      text-decoration: none;
+      font-weight: 500;
+      transition: background 0.25s;
+    }
+    .btn-discord:hover { background: #4752c4; }
+    .footer-discord { color: #5865F2 !important; }
+    .footer-discord:hover { color: #7289da !important; }
+    .nav-cta:hover {
+      background: var(--accent);
+      color: var(--bg);
+    }
+
+    /* ─── HERO ─── */
+    #hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 120px 48px 80px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-grid {
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(0,229,255,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,229,255,0.04) 1px, transparent 1px);
+      background-size: 60px 60px;
+      mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 40%, transparent 100%);
+    }
+
+    .hero-glow {
+      position: absolute;
+      top: -200px; right: -200px;
+      width: 700px; height: 700px;
+      background: radial-gradient(circle, rgba(0,229,255,0.08) 0%, transparent 65%);
+      pointer-events: none;
+    }
+
+    .hero-glow2 {
+      position: absolute;
+      bottom: -150px; left: -100px;
+      width: 500px; height: 500px;
+      background: radial-gradient(circle, rgba(0,255,136,0.06) 0%, transparent 65%);
+      pointer-events: none;
+    }
+
+    .hero-tag {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      color: var(--accent2);
+      text-transform: uppercase;
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .hero-tag::before {
+      content: '';
+      display: block;
+      width: 32px; height: 1px;
+      background: var(--accent2);
+    }
+
+    .hero-tag .pulse {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--accent2);
+      animation: pulse 2s infinite;
+      margin-left: -4px;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.7); }
+    }
+
+    h1 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(4.5rem, 10vw, 9rem);
+      line-height: 0.92;
+      letter-spacing: 0.02em;
+      color: #fff;
+      position: relative;
+      max-width: 900px;
+    }
+
+    h1 .line-accent { color: var(--accent); }
+    h1 .line-dim { color: var(--text-dim); }
+
+    .hero-sub {
+      margin-top: 32px;
+      font-size: 1.1rem;
+      font-weight: 300;
+      letter-spacing: 0.08em;
+      color: var(--text-dim);
+      max-width: 540px;
+      line-height: 1.7;
+    }
+
+    .hero-actions {
+      margin-top: 48px;
+      display: flex;
+      gap: 16px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .btn-primary {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.8rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      padding: 16px 40px;
+      background: var(--accent);
+      color: var(--bg);
+      text-decoration: none;
+      font-weight: 500;
+      transition: all 0.25s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn-primary::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: rgba(255,255,255,0.12);
+      transform: translateX(-100%);
+      transition: transform 0.3s;
+    }
+
+    .btn-primary:hover::after { transform: translateX(0); }
+
+    .btn-secondary {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.8rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      padding: 16px 40px;
+      border: 1px solid var(--border);
+      color: var(--text);
+      text-decoration: none;
+      transition: all 0.25s;
+    }
+
+    .btn-secondary:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    /* ─── STATS TICKER ─── */
+    .ticker-wrap {
+      width: 100%;
+      overflow: hidden;
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 0;
+      margin: 60px 0 0;
+    }
+
+    .ticker {
+      display: flex;
+      gap: 0;
+      animation: ticker 30s linear infinite;
+      width: max-content;
+    }
+
+    @keyframes ticker {
+      from { transform: translateX(0); }
+      to { transform: translateX(-50%); }
+    }
+
+    .ticker-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 0 40px;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.72rem;
+      letter-spacing: 0.1em;
+      white-space: nowrap;
+    }
+
+    .ticker-item .label { color: var(--text-dim); }
+    .ticker-item .val { color: var(--accent); font-weight: 500; }
+    .ticker-item .pos { color: var(--accent2); }
+    .ticker-item .neg { color: var(--accent3); }
+    .ticker-item .sep { color: var(--border); margin: 0 10px; }
+
+    /* ─── SECTION COMMON ─── */
+    section { padding: 100px 48px; }
+
+    .section-tag {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.68rem;
+      letter-spacing: 0.2em;
+      color: var(--accent);
+      text-transform: uppercase;
+      margin-bottom: 16px;
+    }
+
+    .section-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(2.5rem, 5vw, 4.5rem);
+      letter-spacing: 0.04em;
+      color: #fff;
+      line-height: 1;
+    }
+
+    /* ─── STATS GRID ─── */
+    #stats {
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1px;
+      background: var(--border);
+      margin-top: 60px;
+    }
+
+    .stat-card {
+      background: var(--bg);
+      padding: 40px 32px;
+      position: relative;
+      overflow: hidden;
+      transition: background 0.3s;
+    }
+
+    .stat-card:hover { background: var(--surface2); }
+
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--accent), transparent);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .stat-card:hover::before { opacity: 1; }
+
+    .stat-num {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 3.5rem;
+      letter-spacing: 0.03em;
+      line-height: 1;
+      color: var(--accent);
+    }
+
+    .stat-num.green { color: var(--accent2); }
+    .stat-num.gold { color: var(--gold); }
+
+    .stat-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      margin-top: 8px;
+    }
+
+    .stat-desc {
+      font-size: 0.85rem;
+      color: var(--text-dim);
+      margin-top: 6px;
+      letter-spacing: 0.04em;
+    }
+
+    /* ─── LIVE PERFORMANCE ─── */
+    #performance {
+      background: var(--bg);
+    }
+
+    .perf-header {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 24px;
+      margin-bottom: 48px;
+    }
+
+    .live-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--accent3);
+      border: 1px solid var(--accent3);
+      padding: 6px 14px;
+    }
+
+    .live-badge .dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--accent3);
+      animation: pulse 1.5s infinite;
+    }
+
+    .perf-frame-wrap {
+      position: relative;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      box-shadow: var(--glow);
+      overflow: hidden;
+    }
+
+    .perf-frame-wrap::before {
+      content: 'LIVE PERFORMANCE DASHBOARD';
+      font-family: 'DM Mono', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      color: var(--text-dim);
+      display: block;
+      padding: 12px 20px;
+      border-bottom: 1px solid var(--border);
+      background: var(--surface2);
+    }
+
+    .perf-frame-wrap::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--accent2), var(--accent), var(--accent2));
+    }
+
+    .perf-frame-wrap iframe {
+      display: block;
+      width: 100%;
+      height: 680px;
+      border: none;
+      background: #fff;
+    }
+
+    /* ─── FEATURES ─── */
+    #features {
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1px;
+      background: var(--border);
+      margin-top: 60px;
+    }
+
+    .feat-card {
+      background: var(--bg);
+      padding: 48px 36px;
+      position: relative;
+      overflow: hidden;
+      transition: background 0.3s;
+    }
+
+    .feat-card:hover { background: #0c1a28; }
+
+    .feat-icon {
+      width: 48px; height: 48px;
+      margin-bottom: 24px;
+      position: relative;
+    }
+
+    .feat-icon svg {
+      width: 100%; height: 100%;
+      stroke: var(--accent);
+      fill: none;
+      stroke-width: 1.5;
+    }
+
+    .feat-num {
+      position: absolute;
+      top: 36px; right: 36px;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 4rem;
+      color: rgba(0,229,255,0.05);
+      line-height: 1;
+      letter-spacing: 0.02em;
+    }
+
+    .feat-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.6rem;
+      letter-spacing: 0.06em;
+      color: #fff;
+      margin-bottom: 14px;
+    }
+
+    .feat-desc {
+      font-size: 0.9rem;
+      color: var(--text-dim);
+      line-height: 1.7;
+      letter-spacing: 0.03em;
+      font-weight: 300;
+    }
+
+    /* ─── HOW IT WORKS ─── */
+    #how {
+      background: var(--bg);
+    }
+
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 40px;
+      margin-top: 60px;
+      position: relative;
+    }
+
+    .steps::before {
+      content: '';
+      position: absolute;
+      top: 36px; left: 80px; right: 80px; height: 1px;
+      background: linear-gradient(90deg, transparent, var(--border), var(--border), transparent);
+    }
+
+    .step {
+      text-align: center;
+      position: relative;
+    }
+
+    .step-num {
+      width: 72px; height: 72px;
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 24px;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.8rem;
+      color: var(--accent);
+      background: var(--bg);
+      position: relative;
+      z-index: 1;
+      transition: all 0.3s;
+    }
+
+    .step:hover .step-num {
+      background: var(--accent);
+      color: var(--bg);
+      border-color: var(--accent);
+      box-shadow: 0 0 30px rgba(0,229,255,0.3);
+    }
+
+    .step-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.3rem;
+      letter-spacing: 0.08em;
+      color: #fff;
+      margin-bottom: 10px;
+    }
+
+    .step-desc {
+      font-size: 0.85rem;
+      color: var(--text-dim);
+      line-height: 1.7;
+      letter-spacing: 0.03em;
+      font-weight: 300;
+    }
+
+    /* ─── CTA ─── */
+    #cta {
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      text-align: center;
+      padding: 120px 48px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    #cta::before {
+      content: 'AUTOBOT';
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 22vw;
+      color: rgba(0,229,255,0.025);
+      letter-spacing: 0.1em;
+      white-space: nowrap;
+      pointer-events: none;
+    }
+
+    .cta-tag { margin-bottom: 20px; }
+
+    .cta-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(3rem, 7vw, 7rem);
+      letter-spacing: 0.04em;
+      color: #fff;
+      line-height: 0.95;
+      margin-bottom: 32px;
+    }
+
+    .cta-title span { color: var(--accent); }
+
+    .cta-sub {
+      font-size: 1rem;
+      color: var(--text-dim);
+      letter-spacing: 0.08em;
+      max-width: 500px;
+      margin: 0 auto 48px;
+      line-height: 1.7;
+      font-weight: 300;
+    }
+
+    .cta-buttons {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    /* ─── FOOTER ─── */
+    footer {
+      background: var(--bg);
+      border-top: 1px solid var(--border);
+      padding: 40px 48px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+
+    .footer-logo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.4rem;
+      letter-spacing: 0.15em;
+      color: var(--accent);
+    }
+
+    .footer-logo span { color: var(--accent2); }
+
+    .footer-disclaimer {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.58rem;
+      letter-spacing: 0.08em;
+      color: var(--text-dim);
+      max-width: 500px;
+      line-height: 1.7;
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 24px;
+    }
+
+    .footer-links a {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.62rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .footer-links a:hover { color: var(--accent); }
+
+    /* ─── REVEAL ANIMATIONS ─── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ─── RESPONSIVE ─── */
+    @media (max-width: 768px) {
+      nav { padding: 16px 24px; }
+      nav ul { display: none; }
+      #hero, section { padding-left: 24px; padding-right: 24px; }
+      .steps::before { display: none; }
+      footer { flex-direction: column; gap: 16px; }
+      .perf-frame-wrap iframe { height: 480px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">AUTO<span>BOT</span></div>
+  <ul>
+    <li><a href="#stats">Performance</a></li>
+    <li><a href="#performance">Live Data</a></li>
+    <li><a href="#features">Features</a></li>
+    <li><a href="#how">How It Works</a></li>
+  </ul>
+  <a href="https://discord.com/invite/9rcHUh8rRx" target="_blank" class="nav-cta nav-discord">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" style="vertical-align:middle;margin-right:6px;margin-top:-2px"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057c.002.022.015.043.032.054a19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03z"/></svg>
+    Join Discord
+  </a>
+  <a href="#cta" class="nav-cta">Get Access</a>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-glow"></div>
+  <div class="hero-glow2"></div>
+
+  <div class="hero-tag">
+    <div class="pulse"></div>
+    Automation Bot Trading — Hands-Free Execution. Real Results.
+  </div>
+
+  <h1>
+    <span class="line-dim">AUTOMATION</span><br>
+    <span class="line-accent">BOT</span><br>
+    <span>TRADING</span>
+  </h1>
+
+  <p class="hero-sub">
+    Trades are executed automatically in your broker account using predefined strategy logic.
+    No manual alerts. No chasing entries. Just a fast, reliable automation setup designed to help you
+    trade with more consistency while keeping full control of your account.
+  </p>
+
+  <div class="hero-actions">
+    <a href="#cta" class="btn-primary">Start Trading Now</a>
+    <a href="#performance" class="btn-secondary">View Live Results</a>
+  </div>
+
+  <!-- TICKER -->
+  <div class="ticker-wrap">
+    <div class="ticker" id="liveTicker">
+      <div class="ticker-item"><span class="label">LOADING MARKET DATA</span><span class="sep">|</span><span class="val">...</span></div>
+    </div>
+  </div>
+
+  <style>
+    .ticker-arrow-up::before { content: '▲ '; font-size: 0.6rem; }
+    .ticker-arrow-down::before { content: '▼ '; font-size: 0.6rem; }
+  </style>
+</section>
+
+<!-- ABOUT -->
+<section id="about" style="background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border);">
+  <div class="about-inner">
+    <div class="about-left reveal">
+      <div class="section-tag">// about the bot</div>
+      <div class="section-title">A FULLY AUTOMATED<br>TRADING EXPERIENCE<br><span style="color:var(--accent)">BUILT FOR SPEED<br>&amp; SIMPLICITY</span></div>
+    </div>
+    <div class="about-right reveal">
+      <p class="about-body">
+        Automation Bot Trading is a fully automated system where trades are executed directly in the member's broker account based on predefined logic and strategy.
+      </p>
+      <p class="about-body">
+        There are no manual alerts to follow and no need for members to place trades themselves. The system is built to reduce emotional decision-making while giving members full control over their account at all times.
+      </p>
+      <div class="about-pillars">
+        <div class="pillar">
+          <div class="pillar-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+          </div>
+          <div>
+            <div class="pillar-title">Instant Execution</div>
+            <div class="pillar-desc">Trades fire directly in your broker account the moment conditions are met — no delay, no manual input.</div>
+          </div>
+        </div>
+        <div class="pillar">
+          <div class="pillar-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </div>
+          <div>
+            <div class="pillar-title">Your Account, Your Control</div>
+            <div class="pillar-desc">You retain full ownership and access to your funds at all times. The bot trades on your behalf — nothing more.</div>
+          </div>
+        </div>
+        <div class="pillar">
+          <div class="pillar-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M8 12l2.5 2.5L16 9"/></svg>
+          </div>
+          <div>
+            <div class="pillar-title">Emotion-Free Strategy</div>
+            <div class="pillar-desc">Every decision follows predefined rules. No fear, no greed — just consistent, disciplined execution every session.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <style>
+    .about-inner {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: start;
+    }
+    .about-body {
+      font-size: 1rem;
+      color: var(--text-dim);
+      line-height: 1.85;
+      letter-spacing: 0.04em;
+      font-weight: 300;
+      margin-bottom: 20px;
+    }
+    .about-pillars {
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+      margin-top: 40px;
+      padding-top: 40px;
+      border-top: 1px solid var(--border);
+    }
+    .pillar {
+      display: flex;
+      gap: 18px;
+      align-items: flex-start;
+    }
+    .pillar-icon {
+      flex-shrink: 0;
+      width: 40px; height: 40px;
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--accent);
+    }
+    .pillar-icon svg { width: 18px; height: 18px; }
+    .pillar-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.1rem;
+      letter-spacing: 0.08em;
+      color: #fff;
+      margin-bottom: 4px;
+    }
+    .pillar-desc {
+      font-size: 0.82rem;
+      color: var(--text-dim);
+      line-height: 1.7;
+      letter-spacing: 0.03em;
+      font-weight: 300;
+    }
+    @media (max-width: 768px) {
+      .about-inner { grid-template-columns: 1fr; gap: 40px; }
+    }
+  </style>
+</section>
+
+<!-- LIVE PERFORMANCE -->
+<section id="performance">
+  <div class="perf-header">
+    <div>
+      <div class="section-tag reveal">// live tracker</div>
+      <div class="section-title reveal">REAL-TIME<br>PERFORMANCE</div>
+    </div>
+    <div>
+      <div class="live-badge reveal"><div class="dot"></div> Live Feed — Auto-refreshes every 5 min</div>
+      <p style="font-family:'DM Mono',monospace;font-size:0.62rem;letter-spacing:0.08em;color:var(--text-dim);margin-top:10px;">
+        Data pulled directly from verified trading records
+      </p>
+    </div>
+  </div>
+
+  <div class="perf-frame-wrap reveal">
+    <iframe
+      src="https://mastering-ops.github.io/100-day-trading-/?mode=readonly&sheet=https%3A%2F%2Fdocs.google.com%2Fspreadsheets%2Fd%2Fe%2F2PACX-1vTpmspOtHF8UBG1H--0xyiOXq2ja36cKu7hg15KCezbViJDijkPO0RLNCbd2JJf6FKCyuiS_lkbJHe4%2Fpub%3Foutput%3Dcsv&from=2026-04-01&to=2026-04-16&start=2026-04-01&refresh=300"
+      title="Live Trading Performance Dashboard"
+      loading="lazy"
+      allowfullscreen
+    ></iframe>
+  </div>
+
+  <p style="font-family:'DM Mono',monospace;font-size:0.6rem;letter-spacing:0.1em;color:var(--text-dim);margin-top:16px;text-align:right;">
+    ↗ <a href="https://mastering-ops.github.io/100-day-trading-/?mode=readonly&sheet=https%3A%2F%2Fdocs.google.com%2Fspreadsheets%2Fd%2Fe%2F2PACX-1vTpmspOtHF8UBG1H--0xyiOXq2ja36cKu7hg15KCezbViJDijkPO0RLNCbd2JJf6FKCyuiS_lkbJHe4%2Fpub%3Foutput%3Dcsv&from=2026-04-01&to=2026-04-16&start=2026-04-01&refresh=300" target="_blank" style="color:var(--accent);text-decoration:none;">Open Full Dashboard in New Tab</a>
+  </p>
+</section>
+
+<!-- FEATURES -->
+<section id="features">
+  <div class="section-tag reveal">// what we deploy</div>
+  <div class="section-title reveal">BUILT FOR EDGE,<br>NOT LUCK</div>
+
+  <div class="features-grid">
+    <div class="feat-card reveal">
+      <div class="feat-num">01</div>
+      <div class="feat-icon">
+        <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+      </div>
+      <div class="feat-title">Algorithmic Precision</div>
+      <div class="feat-desc">Signal-based entries refined through thousands of backtested scenarios. No emotion, no hesitation — pure execution.</div>
+    </div>
+    <div class="feat-card reveal">
+      <div class="feat-num">02</div>
+      <div class="feat-icon">
+        <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      </div>
+      <div class="feat-title">Risk-First Architecture</div>
+      <div class="feat-desc">Built to protect capital first — with member-selected strategies, predefined stop-loss, and automatic trailing stop-loss to lock in profits and limit downside.</div>
+    </div>
+    <div class="feat-card reveal">
+      <div class="feat-num">03</div>
+      <div class="feat-icon">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      </div>
+      <div class="feat-title">Always-On Execution During Market Hours</div>
+      <div class="feat-desc">Real-time options trading with no delays — always ready to act on signals.</div>
+    </div>
+    <div class="feat-card reveal">
+      <div class="feat-num">04</div>
+      <div class="feat-icon">
+        <svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+      </div>
+      <div class="feat-title">Full Transparency</div>
+      <div class="feat-desc">Every trade logged publicly. Our live performance dashboard is open to anyone — no hidden results, no cherry-picking.</div>
+    </div>
+    <div class="feat-card reveal">
+      <div class="feat-num">05</div>
+      <div class="feat-icon">
+        <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      </div>
+      <div class="feat-title">Real-Time Reporting</div>
+      <div class="feat-desc">Fully automated reporting of trims, key levels, and milestones — no manual alerts, just real-time updates.</div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section id="how">
+  <div class="section-tag reveal">// the process</div>
+  <div class="section-title reveal">UP &amp; RUNNING<br>IN MINUTES</div>
+
+  <div class="steps">
+    <div class="step reveal">
+      <div class="step-num">01</div>
+      <div class="step-title">Connect Your Broker</div>
+      <div class="step-desc">Easily link your broker during the onboarding call for a secure, fully automated trading experience.</div>
+    </div>
+    <div class="step reveal">
+      <div class="step-num">02</div>
+      <div class="step-title">Set Risk Parameters</div>
+      <div class="step-desc">Define your risk tolerance and lot sizing. The bot adapts to your profile automatically.</div>
+    </div>
+    <div class="step reveal">
+      <div class="step-num">03</div>
+      <div class="step-title">Activate The Bot</div>
+      <div class="step-desc">We activate and configure your bot during onboarding so you're ready to trade instantly.</div>
+    </div>
+    <div class="step reveal">
+      <div class="step-num">04</div>
+      <div class="step-title">Monitor &amp; Scale</div>
+      <div class="step-desc">Watch live from your dashboard. Adjust settings at any time, or let the bot run hands-free indefinitely.</div>
+    </div>
+  </div>
+</section>
+
+<!-- MEMBER REVIEWS -->
+<section id="reviews" style="background:var(--surface);border-top:1px solid var(--border);padding-left:0;padding-right:0;">
+  <div style="padding:0 48px 48px;">
+    <div class="section-tag reveal">// member feedback</div>
+    <div class="section-title reveal">WHAT OUR MEMBERS<br><span style="color:var(--accent)">ARE SAYING</span></div>
+  </div>
+
+  <div class="reviews-outer">
+    <div class="reviews-track" id="reviewsTrack">
+      <!-- Cards injected by JS -->
+    </div>
+  </div>
+
+  <div class="reviews-outer" style="margin-top:16px;">
+    <div class="reviews-track reviews-track-reverse" id="reviewsTrack2"></div>
+  </div>
+
+  <style>
+    .reviews-outer {
+      overflow: hidden;
+      width: 100%;
+      mask-image: linear-gradient(90deg, transparent 0%, black 8%, black 92%, transparent 100%);
+      -webkit-mask-image: linear-gradient(90deg, transparent 0%, black 8%, black 92%, transparent 100%);
+    }
+    .reviews-track {
+      display: flex;
+      gap: 16px;
+      width: max-content;
+      animation: scrollLeft 60s linear infinite;
+      padding: 8px 0;
+    }
+    .reviews-track-reverse {
+      animation: scrollRight 55s linear infinite;
+    }
+    @keyframes scrollLeft {
+      from { transform: translateX(0); }
+      to { transform: translateX(-50%); }
+    }
+    @keyframes scrollRight {
+      from { transform: translateX(-50%); }
+      to { transform: translateX(0); }
+    }
+    .reviews-track:hover,
+    .reviews-track-reverse:hover {
+      animation-play-state: paused;
+    }
+    .review-card {
+      flex-shrink: 0;
+      width: 280px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      padding: 24px;
+      position: relative;
+      transition: border-color 0.3s;
+    }
+    .review-card:hover { border-color: rgba(0,229,255,0.3); }
+    .review-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+    .review-avatar {
+      width: 42px; height: 42px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.2rem;
+      color: var(--bg);
+      flex-shrink: 0;
+    }
+    .review-name {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      color: #fff;
+    }
+    .review-handle {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.58rem;
+      letter-spacing: 0.08em;
+      color: var(--text-dim);
+      margin-top: 2px;
+    }
+    .verified-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.52rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent2);
+      border: 1px solid rgba(0,255,136,0.3);
+      padding: 2px 7px;
+      margin-top: 4px;
+    }
+    .review-stars {
+      display: flex;
+      gap: 3px;
+      margin-bottom: 12px;
+    }
+    .star { font-size: 0.9rem; }
+    .star.filled { color: #f4c542; }
+    .star.empty { color: #2a3a4a; }
+    .review-text {
+      font-size: 0.85rem;
+      color: var(--text-dim);
+      line-height: 1.7;
+      letter-spacing: 0.02em;
+      font-weight: 300;
+    }
+  </style>
+</section>
+
+<!-- FAQ -->
+<section id="faq" style="background:var(--bg);border-top:1px solid var(--border);">
+  <div class="section-tag reveal">// got questions?</div>
+  <div class="section-title reveal">FREQUENTLY ASKED<br><span style="color:var(--accent)">QUESTIONS</span></div>
+
+  <div class="faq-list" id="faqList">
+
+    <div class="faq-item reveal">
+      <button class="faq-q" onclick="toggleFaq(this)">
+        <span>What is Automation Bot Trading?</span>
+        <svg class="faq-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div class="faq-a">Automation Bot Trading is a fully automated trading system that connects directly to your broker account and executes trades based on a predefined strategy. You don't need to place any trades manually — the bot handles everything for you.</div>
+    </div>
+
+    <div class="faq-item reveal">
+      <button class="faq-q" onclick="toggleFaq(this)">
+        <span>Do I need trading experience to use this?</span>
+        <svg class="faq-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div class="faq-a">No prior trading experience is required. The system is designed to be hands-free. Once it's set up in your broker account, it operates automatically. The broker integration is handled during your onboarding call with our team.</div>
+    </div>
+
+    <div class="faq-item reveal">
+      <button class="faq-q" onclick="toggleFaq(this)">
+        <span>Is my money safe? Do I send funds anywhere?</span>
+        <svg class="faq-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div class="faq-a">Your funds always remain in your own broker account. You never send money to us. The bot is given trading access only — it cannot withdraw funds. You retain full ownership and control of your capital at all times.</div>
+    </div>
+
+
+
+    <div class="faq-item reveal">
+      <button class="faq-q" onclick="toggleFaq(this)">
+        <span>What markets does the bot trade?</span>
+        <svg class="faq-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div class="faq-a">The bot is focused on Options trading.</div>
+    </div>
+
+    <div class="faq-item reveal">
+      <button class="faq-q" onclick="toggleFaq(this)">
+        <span>How much capital do I need to start?</span>
+        <svg class="faq-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div class="faq-a">We recommend a minimum starting balance of $500 USD to allow proper lot sizing and risk management. However, the bot can be configured for different account sizes, and we'll advise on the best setup for your capital level.</div>
+    </div>
+
+    <div class="faq-item reveal">
+      <button class="faq-q" onclick="toggleFaq(this)">
+        <span>Can I withdraw my profits at any time?</span>
+        <svg class="faq-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div class="faq-a">Yes. Since the funds are in your own broker account, you can deposit or withdraw at any time according to your broker's standard procedures. There are no lock-in periods from our side.</div>
+    </div>
+
+    <div class="faq-item reveal">
+      <button class="faq-q" onclick="toggleFaq(this)">
+        <span>What are the risks involved?</span>
+        <svg class="faq-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div class="faq-a">All trading carries risk, including the risk of loss. Past performance does not guarantee future results. The bot includes built-in stop-loss, but market conditions can always produce unexpected outcomes. Only trade with capital you can afford to lose.</div>
+    </div>
+
+    <div class="faq-item reveal">
+      <button class="faq-q" onclick="toggleFaq(this)">
+        <span>How do I track the bot's performance?</span>
+        <svg class="faq-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div class="faq-a">You can view all trades directly inside your broker account at any time. Additionally, our live public performance dashboard (linked on this page) tracks all results from the ongoing 100-day challenge in real time.</div>
+    </div>
+
+    <div class="faq-item reveal">
+      <button class="faq-q" onclick="toggleFaq(this)">
+        <span>How do I get started?</span>
+        <svg class="faq-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div class="faq-a">Simply click the "Get Instant Access" button on this page and book your onboarding call. Our team will guide you through the broker integration live on the call. Most members are fully set up within 30 minutes on the same day.</div>
+    </div>
+
+  </div>
+
+  <style>
+    .faq-list {
+      margin-top: 60px;
+      border-top: 1px solid var(--border);
+    }
+    .faq-item {
+      border-bottom: 1px solid var(--border);
+    }
+    .faq-q {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      padding: 24px 0;
+      background: none;
+      border: none;
+      cursor: pointer;
+      text-align: left;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 1.15rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      color: #fff;
+      transition: color 0.2s;
+    }
+    .faq-q:hover { color: var(--accent); }
+    .faq-arrow {
+      flex-shrink: 0;
+      width: 20px; height: 20px;
+      stroke: var(--accent);
+      transition: transform 0.3s;
+    }
+    .faq-q.open .faq-arrow { transform: rotate(180deg); }
+    .faq-a {
+      font-size: 0.92rem;
+      color: var(--text-dim);
+      line-height: 1.8;
+      letter-spacing: 0.03em;
+      font-weight: 300;
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s ease, padding 0.3s ease;
+      padding-bottom: 0;
+    }
+    .faq-a.open {
+      max-height: 300px;
+      padding-bottom: 24px;
+    }
+  </style>
+</section>
+
+<!-- CTA -->
+<section id="cta">
+  <div class="section-tag cta-tag reveal">// ready to automate?</div>
+  <div class="cta-title reveal">STOP TRADING<br><span>START WINNING</span></div>
+  <p class="cta-sub reveal">Join traders already running Automation Bot Trading. Verified results. Transparent data. No black boxes.</p>
+  <div class="cta-buttons">
+    <button onclick="openModal()" class="btn-primary">Get Instant Access</button>
+    <a href="https://discord.com/invite/9rcHUh8rRx" target="_blank" class="btn-discord">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057c.002.022.015.043.032.054a19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03z"/></svg>
+      Join Discord
+    </a>
+  </div>
+</section>
+<div id="leadModal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.85);backdrop-filter:blur(6px);align-items:center;justify-content:center;">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+
+    <div class="modal-tag">// get instant access</div>
+    <div class="modal-title">BOOK YOUR<br><span>ONBOARDING CALL</span></div>
+    <p class="modal-sub">Fill in your details and we'll reach out within 24 hours to get you set up — usually same day.</p>
+
+    <div class="form-group">
+      <label>Full Name *</label>
+      <input type="text" id="f_name" placeholder="John Smith" />
+    </div>
+    <div class="form-group">
+      <label>Email Address *</label>
+      <input type="email" id="f_email" placeholder="john@email.com" />
+    </div>
+    <div class="form-group">
+      <label>Discord ID *</label>
+      <input type="text" id="f_discord" placeholder="e.g. johndoe123" />
+    </div>
+    <div class="form-group">
+      <label>Message <span style="color:var(--text-dim);font-size:0.7rem;">(optional)</span></label>
+      <textarea id="f_message" rows="3" placeholder="Any questions or details you'd like us to know..."></textarea>
+    </div>
+
+    <button class="btn-submit" id="submitBtn" onclick="submitLead()">
+      <span id="submitText">Submit — Get Access</span>
+    </button>
+
+    <div id="formSuccess" style="display:none;" class="form-success">
+      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="var(--accent2)" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l2.5 2.5L16 9"/></svg>
+      <p>Request sent! We'll contact you on Discord shortly.</p>
+    </div>
+    <div id="formError" style="display:none;" class="form-error">
+      ⚠️ Something went wrong. Please try again or message us directly on Discord.
+    </div>
+  </div>
+</div>
+
+<style>
+  #leadModal.open { display:flex !important; }
+
+  .modal-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 48px;
+    width: 100%;
+    max-width: 520px;
+    position: relative;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 0 80px rgba(0,229,255,0.1);
+  }
+
+  .modal-box::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent2), var(--accent));
+  }
+
+  .modal-close {
+    position: absolute;
+    top: 16px; right: 20px;
+    background: none;
+    border: none;
+    color: var(--text-dim);
+    font-size: 1rem;
+    cursor: pointer;
+    transition: color 0.2s;
+  }
+  .modal-close:hover { color: #fff; }
+
+  .modal-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+
+  .modal-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2.4rem;
+    letter-spacing: 0.04em;
+    color: #fff;
+    line-height: 1;
+    margin-bottom: 14px;
+  }
+  .modal-title span { color: var(--accent); }
+
+  .modal-sub {
+    font-size: 0.85rem;
+    color: var(--text-dim);
+    line-height: 1.7;
+    letter-spacing: 0.03em;
+    margin-bottom: 32px;
+    font-weight: 300;
+  }
+
+  .form-group {
+    margin-bottom: 20px;
+  }
+
+  .form-group label {
+    display: block;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 8px;
+  }
+
+  .form-group input,
+  .form-group textarea {
+    width: 100%;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    color: #fff;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 1rem;
+    letter-spacing: 0.04em;
+    padding: 12px 16px;
+    outline: none;
+    transition: border-color 0.2s;
+    resize: none;
+  }
+
+  .form-group input:focus,
+  .form-group textarea:focus {
+    border-color: var(--accent);
+  }
+
+  .form-group input::placeholder,
+  .form-group textarea::placeholder {
+    color: var(--text-dim);
+    opacity: 0.5;
+  }
+
+  .btn-submit {
+    width: 100%;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.82rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 16px;
+    background: var(--accent);
+    color: var(--bg);
+    border: none;
+    cursor: pointer;
+    font-weight: 500;
+    margin-top: 8px;
+    transition: opacity 0.2s;
+  }
+  .btn-submit:hover { opacity: 0.88; }
+  .btn-submit:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  .form-success {
+    text-align: center;
+    padding: 24px 0 8px;
+    color: var(--accent2);
+    font-size: 0.95rem;
+    letter-spacing: 0.04em;
+  }
+  .form-success p { margin-top: 12px; color: var(--text); }
+
+  .form-error {
+    margin-top: 12px;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.08em;
+    color: var(--accent3);
+    text-align: center;
+  }
+
+  @media (max-width: 600px) {
+    .modal-box { padding: 32px 24px; }
+    .modal-title { font-size: 1.9rem; }
+  }
+</style>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">AUTO<span>BOT</span></div>
+  <p class="footer-disclaimer">
+    Trading involves significant risk and may not be suitable for all investors. Past performance is not indicative of future results. All data shown is for informational purposes only. Trade responsibly.
+  </p>
+  <div class="footer-links">
+    <a href="https://discord.com/invite/9rcHUh8rRx" target="_blank" class="footer-discord">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" style="vertical-align:middle;margin-right:5px;margin-top:-2px"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057c.002.022.015.043.032.054a19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03z"/></svg>
+      Join Discord
+    </a>
+    <a href="#">Terms</a>
+    <a href="#">Privacy</a>
+  </div>
+</footer>
+
+<script>
+  // ── REVIEWS DATA ──────────────────────────────────────────────
+  const reviews = [
+    { name:"Sneha", handle:"sneha_trades", stars:4.5, text:"Runs smoothly. No stress, no overthinking." },
+    { name:"Marcus R.", handle:"marcus_fx", stars:5, text:"Best decision I made this year. Bot handles everything and I just watch the results." },
+    { name:"Linh T.", handle:"linh_trades", stars:5, text:"Setup was easy. Was running the same day. Very impressed with the consistency." },
+    { name:"James K.", handle:"jktrader", stars:4, text:"Solid system. No manual work needed at all. Just check results whenever I want." },
+    { name:"Priya M.", handle:"priya_m", stars:5, text:"I was skeptical at first but the live dashboard convinced me. Transparent and reliable." },
+    { name:"Dylan B.", handle:"dylan_bot", stars:4.5, text:"Great experience. The automation is tight and the risk management is sensible." },
+    { name:"Fatima A.", handle:"fatima_a", stars:5, text:"Finally a system that does what it says. No alerts to chase, no FOMO. Pure automation." },
+    { name:"Tom H.", handle:"tomh_fx", stars:4, text:"I appreciate the public tracking. You can see every trade, nothing hidden." },
+    { name:"Ana R.", handle:"ana_r99", stars:5, text:"My account has been growing steadily since I connected the bot. Very happy." },
+    { name:"Kevin L.", handle:"kev_trades", stars:4.5, text:"Works across multiple tickers giving flexibility to member choice." },
+    { name:"Sarah D.", handle:"sarah_d_fx", stars:5, text:"No stress trading. I check in once a day and everything is handled." },
+    { name:"Omar S.", handle:"omar_s", stars:4, text:"The setup guide was clear. Was up and running in under an hour." },
+    { name:"Nina W.", handle:"nina_w", stars:5, text:"Incredibly consistent. Week after week, the bot just keeps performing." },
+    { name:"Ravi P.", handle:"ravi_p", stars:5, text:"I love that my funds stay in my account. Full control, full automation." },
+    { name:"Chloe F.", handle:"chloe_fx", stars:4.5, text:"Trades execute fast. No slippage issues with my broker. Very clean." },
+    { name:"Ahmed N.", handle:"ahmed_n", stars:5, text:"The 100-day challenge proof sold me. Real numbers, not just screenshots." },
+    { name:"Lisa M.", handle:"lisa_m", stars:4, text:"Good results so far. Drawdown has been very controlled which matters most to me." },
+    { name:"Ben C.", handle:"ben_c_trade", stars:5, text:"Turned trading from stressful to passive. Honestly life-changing." },
+    { name:"Yuki T.", handle:"yuki_t", stars:4.5, text:"Support team is responsive. Setup process was well explained." },
+    { name:"Carlos G.", handle:"carlos_g", stars:5, text:"Running on Tradestation broker. Trades perfectly. No issues in 3 months of use." },
+    { name:"Emma S.", handle:"emma_s", stars:4, text:"Simple, clean, effective. Does exactly what it promises." },
+    { name:"David O.", handle:"david_o_fx", stars:5, text:"Bot executed 12 trades this week. 9 winners. Very pleased with those numbers." },
+    { name:"Mei L.", handle:"mei_l", stars:4.5, text:"Runs smoothly." },
+    { name:"Felix R.", handle:"felix_r", stars:5, text:"No emotional trading anymore. The bot is cold, calculated, consistent." },
+    { name:"Nadia B.", handle:"nadia_b", stars:4, text:"Finally automated my trading. Wish I'd done this sooner honestly." },
+    { name:"Patrick M.", handle:"pat_m", stars:5, text:"Clear rules, clear results. Nothing hidden, nothing to guess at." },
+    { name:"Layla K.", handle:"layla_k", stars:4.5, text:"Strategy driven. Perfect execution and massive wins." },
+    { name:"Sam F.", handle:"sam_f_bot", stars:5, text:"The live dashboard is a great trust signal. Shows every trade, win or lose." },
+    { name:"Ines V.", handle:"ines_v", stars:4, text:"Consistent week-on-week. Small drawdowns. Exactly what I needed." },
+    { name:"Leo H.", handle:"leo_h_fx", stars:5, text:"Profit factor is real. I've verified it myself on my account." },
+    { name:"Grace T.", handle:"grace_t", stars:4.5, text:"Bot never misses a trade. While I'm away or even on vacation, it keeps working." },
+    { name:"Arjun D.", handle:"arjun_d", stars:5, text:"Seamless broker integration connected in minutes." },
+    { name:"Mia C.", handle:"mia_c_trade", stars:4, text:"Love the hands-free approach. I don't have to watch charts anymore." },
+    { name:"Ethan W.", handle:"ethan_w", stars:5, text:"Risk management is built-in and sensible. Max drawdown is low and that's what counts." },
+    { name:"Sofia L.", handle:"sofia_l", stars:4.5, text:"Transparent system. Huge credibility points." },
+    { name:"Hassan A.", handle:"hassan_a", stars:5, text:"Been with the bot for 2 months. Steady growth, low stress. 10/10." },
+    { name:"Ruby N.", handle:"ruby_n_fx", stars:4, text:"Setup was easy and ready to roll. Made 90% on my first trade." },
+    { name:"Will P.", handle:"will_p", stars:5, text:"This is how trading should work — automated, disciplined, consistent." },
+    { name:"Aisha M.", handle:"aisha_m", stars:4.5, text:"Verified member here. Results match the dashboard. No surprises." },
+    { name:"Josh K.", handle:"josh_k_bot", stars:5, text:"Has taken the guesswork out of trading entirely. Very grateful." },
+    { name:"Diana C.", handle:"diana_c", stars:4, text:"My broker account has grown each month since setup. Can't complain." },
+    { name:"Tobias R.", handle:"tobias_r", stars:5, text:"Ran backtests myself — the logic is solid. Now live and performing." },
+    { name:"Mira S.", handle:"mira_s", stars:4.5, text:"No need to understand charts or indicators. Bot does the analysis." },
+    { name:"Nathan G.", handle:"nathan_g", stars:5, text:"Joined via the 100-day challenge proof. Convinced from day one." },
+    { name:"Lucia F.", handle:"lucia_f_fx", stars:4, text:"Exactly as described — hands-free, automated, reliable." },
+    { name:"Oliver B.", handle:"oliver_b", stars:5, text:"Three months in. Compounding is working. Very satisfied." },
+    { name:"Zara H.", handle:"zara_h", stars:4.5, text:"Trades execute while I'm at work. Checked my account at lunch — 4 wins." },
+    { name:"Max V.", handle:"max_v", stars:5, text:"Transparent, fast, and no emotional noise. Perfect trading system." },
+    { name:"Jenny T.", handle:"jenny_t_fx", stars:4, text:"Would recommend to anyone who wants to trade without the stress." },
+    { name:"Ray O.", handle:"ray_o", stars:5, text:"100-day live challenge is the real deal. The public data speaks for itself." },
+    { name:"Vrush", handle:"Vrushi", stars:5, text:"Loving it from day1. Life changer." },
+    { name:"Janu", handle:"Janu", stars:5, text:"QQQ 260501C675 just made over 150%. Cant imagine BOT just played it. HandFree execution." },
+  ];
+
+  const avatarColors = ['#00b4cc','#00c875','#f4a542','#e05d8a','#7b61ff','#00dba8','#ff6b6b','#4ecdc4'];
+
+  function buildCard(r) {
+    const initials = r.name.split(' ').map(w => w[0]).join('').substring(0,2).toUpperCase();
+    const color = avatarColors[r.name.charCodeAt(0) % avatarColors.length];
+    const fullStars = Math.floor(r.stars);
+    const half = r.stars % 1 >= 0.5;
+    let starsHtml = '';
+    for(let i=1;i<=5;i++){
+      if(i<=fullStars) starsHtml += '<span class="star filled">★</span>';
+      else if(i===fullStars+1 && half) starsHtml += '<span class="star filled">★</span>';
+      else starsHtml += '<span class="star empty">★</span>';
+    }
+    return `<div class="review-card">
+      <div class="review-header">
+        <div class="review-avatar" style="background:${color}">${initials}</div>
+        <div>
+          <div class="review-name">${r.name}</div>
+          <div class="review-handle">@${r.handle}</div>
+          <div class="verified-badge">✓ Verified Member</div>
+        </div>
+      </div>
+      <div class="review-stars">${starsHtml}</div>
+      <div class="review-text">"${r.text}"</div>
+    </div>`;
+  }
+
+  function populateTrack(trackId, items) {
+    const track = document.getElementById(trackId);
+    // Double for seamless loop
+    const html = [...items, ...items].map(buildCard).join('');
+    track.innerHTML = html;
+  }
+
+  const half = Math.ceil(reviews.length / 2);
+  populateTrack('reviewsTrack', reviews.slice(0, half));
+  populateTrack('reviewsTrack2', reviews.slice(half));
+
+  // ── FAQ TOGGLE ────────────────────────────────────────────────
+  function toggleFaq(btn) {
+    const answer = btn.nextElementSibling;
+    const isOpen = btn.classList.contains('open');
+    // close all
+    document.querySelectorAll('.faq-q.open').forEach(b => {
+      b.classList.remove('open');
+      b.nextElementSibling.classList.remove('open');
+    });
+    if (!isOpen) {
+      btn.classList.add('open');
+      answer.classList.add('open');
+    }
+  }
+
+  // ── MODAL ─────────────────────────────────────────────────────
+  function openModal() {
+    const modal = document.getElementById('leadModal');
+    modal.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeModal() {
+    const modal = document.getElementById('leadModal');
+    modal.classList.remove('open');
+    document.body.style.overflow = '';
+    document.getElementById('f_name').value = '';
+    document.getElementById('f_email').value = '';
+    document.getElementById('f_discord').value = '';
+    document.getElementById('f_message').value = '';
+    document.getElementById('formSuccess').style.display = 'none';
+    document.getElementById('formError').style.display = 'none';
+    document.getElementById('submitBtn').style.display = 'block';
+    document.getElementById('submitBtn').disabled = false;
+    document.getElementById('submitText').textContent = 'Submit — Get Access';
+  }
+
+  document.getElementById('leadModal').addEventListener('click', function(e) {
+    if (e.target === this) closeModal();
+  });
+
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') closeModal();
+  });
+
+  async function submitLead() {
+    const name    = document.getElementById('f_name').value.trim();
+    const email   = document.getElementById('f_email').value.trim();
+    const discord = document.getElementById('f_discord').value.trim();
+    const message = document.getElementById('f_message').value.trim();
+
+    if (!name || !email || !discord) {
+      alert('Please fill in your Name, Email and Discord ID.');
+      return;
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      alert('Please enter a valid email address.');
+      return;
+    }
+
+    const btn = document.getElementById('submitBtn');
+    const submitText = document.getElementById('submitText');
+    btn.disabled = true;
+    submitText.textContent = 'Sending...';
+
+    const now = new Date().toLocaleString('en-GB', { dateStyle: 'medium', timeStyle: 'short' });
+
+    const payload = {
+      username: "Automation Bot Trading",
+      embeds: [{
+        title: "🚀 New Lead — Automation Bot Trading",
+        color: 0x00e5ff,
+        fields: [
+          { name: "👤 Full Name",   value: name,                    inline: true },
+          { name: "📧 Email",       value: email,                   inline: true },
+          { name: "💬 Discord ID",  value: discord,                 inline: true },
+          { name: "📝 Message",     value: message || "_(no message)_", inline: false },
+          { name: "⏰ Submitted",   value: now,                     inline: false },
+        ],
+        footer: { text: "Via Automation Bot Trading Website — Get Instant Access" }
+      }]
+    };
+
+    try {
+      const res = await fetch('https://discord.com/api/webhooks/1500229098083975349/MALKLl-XYfvcEi0ypdA6t80J-0OH4INLX_R5qGyO84pjn-qfL_0T0lVUY_UtyBLLBXLB', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      if (res.ok || res.status === 204) {
+        document.getElementById('submitBtn').style.display = 'none';
+        document.getElementById('formSuccess').style.display = 'block';
+        document.getElementById('formError').style.display = 'none';
+      } else {
+        throw new Error('Failed');
+      }
+    } catch (err) {
+      btn.disabled = false;
+      submitText.textContent = 'Submit — Get Access';
+      document.getElementById('formError').style.display = 'block';
+    }
+  }
+
+  // ── LIVE MARKET TICKER ───────────────────────────────────────
+  const TICKER_SYMBOLS = [
+    { symbol: 'SPY',   label: 'S&P 500 ETF' },
+    { symbol: 'QQQ',   label: 'NASDAQ ETF' },
+    { symbol: 'DIA',   label: 'DOW JONES ETF' },
+    { symbol: 'IWM',   label: 'RUSSELL 2000' },
+    { symbol: 'AAPL',  label: 'APPLE' },
+    { symbol: 'TSLA',  label: 'TESLA' },
+    { symbol: 'NVDA',  label: 'NVIDIA' },
+    { symbol: 'MSFT',  label: 'MICROSOFT' },
+    { symbol: 'AMZN',  label: 'AMAZON' },
+    { symbol: 'META',  label: 'META' },
+    { symbol: 'GOOGL', label: 'ALPHABET' },
+    { symbol: 'AMD',   label: 'AMD' },
+    { symbol: 'NFLX',  label: 'NETFLIX' },
+    { symbol: 'UBER',  label: 'UBER' },
+    { symbol: 'COIN',  label: 'COINBASE' },
+    { symbol: 'SHOP',  label: 'SHOPIFY' },
+    { symbol: 'PLTR',  label: 'PALANTIR' },
+    { symbol: 'ARM',   label: 'ARM HOLDINGS' },
+    { symbol: 'SMCI',  label: 'SUPERMICRO' },
+    { symbol: 'INTC',  label: 'INTEL' },
+    { symbol: 'BABA',  label: 'ALIBABA' },
+    { symbol: 'JPM',   label: 'JPMORGAN' },
+    { symbol: 'GS',    label: 'GOLDMAN SACHS' },
+    { symbol: 'BAC',   label: 'BANK OF AMERICA' },
+    { symbol: 'XOM',   label: 'EXXON MOBIL' },
+    { symbol: 'GLD',   label: 'GOLD ETF' },
+    { symbol: 'SLV',   label: 'SILVER ETF' },
+    { symbol: 'USO',   label: 'OIL ETF' },
+    { symbol: 'BTC-USD', label: 'BITCOIN' },
+    { symbol: 'ETH-USD', label: 'ETHEREUM' },
+  ];
+
+  async function fetchQuote(symbol) {
+    const url = `https://query1.finance.yahoo.com/v8/finance/chart/${symbol}?interval=1d&range=2d`;
+    const proxy = `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`;
+    const res = await fetch(proxy);
+    const data = await res.json();
+    const parsed = JSON.parse(data.contents);
+    const meta = parsed.chart.result[0].meta;
+    const price = meta.regularMarketPrice;
+    const prev = meta.chartPreviousClose || meta.previousClose;
+    const change = price - prev;
+    const changePct = (change / prev) * 100;
+    return { price, change, changePct };
+  }
+
+  function buildTickerItem(label, price, change, changePct) {
+    const isPos = changePct >= 0;
+    const cls = isPos ? 'pos' : 'neg';
+    const arrow = isPos ? '▲' : '▼';
+    const sign = isPos ? '+' : '';
+    return `<div class="ticker-item">
+      <span class="label">${label}</span>
+      <span class="sep">|</span>
+      <span class="val" style="color:${isPos ? 'var(--accent2)' : 'var(--accent3)'}">
+        $${price.toFixed(2)}
+      </span>
+      <span class="sep"></span>
+      <span class="val ${cls}">${arrow} ${sign}${changePct.toFixed(2)}%</span>
+    </div>`;
+  }
+
+  async function loadTicker() {
+    try {
+      const results = await Promise.allSettled(
+        TICKER_SYMBOLS.map(s => fetchQuote(s.symbol).then(q => ({ ...s, ...q })))
+      );
+      const items = results
+        .filter(r => r.status === 'fulfilled')
+        .map(r => r.value);
+
+      if (items.length === 0) throw new Error('No data');
+
+      const html = [...items, ...items].map(i =>
+        buildTickerItem(i.label, i.price, i.change, i.changePct)
+      ).join('');
+
+      const track = document.getElementById('liveTicker');
+      track.innerHTML = html;
+      // Restart animation
+      track.style.animation = 'none';
+      track.offsetHeight; // reflow
+      track.style.animation = '';
+    } catch (e) {
+      // Fallback to curated static data if API fails
+      const fallback = [
+        { label:'S&P 500 ETF',    price:547.23,  changePct: 0.42 },
+        { label:'NASDAQ ETF',     price:463.18,  changePct: 0.78 },
+        { label:'DOW JONES ETF',  price:389.55,  changePct: 0.31 },
+        { label:'RUSSELL 2000',   price:201.44,  changePct:-0.52 },
+        { label:'APPLE',          price:189.45,  changePct:-0.31 },
+        { label:'TESLA',          price:172.62,  changePct: 2.14 },
+        { label:'NVIDIA',         price:875.40,  changePct: 1.92 },
+        { label:'MICROSOFT',      price:415.22,  changePct: 0.55 },
+        { label:'AMAZON',         price:182.37,  changePct: 0.88 },
+        { label:'META',           price:492.11,  changePct: 1.23 },
+        { label:'ALPHABET',       price:174.56,  changePct:-0.19 },
+        { label:'AMD',            price:163.44,  changePct: 3.01 },
+        { label:'NETFLIX',        price:621.80,  changePct: 0.94 },
+        { label:'UBER',           price: 74.33,  changePct: 1.10 },
+        { label:'COINBASE',       price:218.77,  changePct: 4.32 },
+        { label:'SHOPIFY',        price: 68.55,  changePct: 1.75 },
+        { label:'PALANTIR',       price: 24.88,  changePct: 2.60 },
+        { label:'ARM HOLDINGS',   price:121.34,  changePct: 1.48 },
+        { label:'SUPERMICRO',     price: 88.22,  changePct:-1.34 },
+        { label:'INTEL',          price: 30.14,  changePct:-0.87 },
+        { label:'ALIBABA',        price: 79.50,  changePct: 0.62 },
+        { label:'JPMORGAN',       price:196.44,  changePct: 0.38 },
+        { label:'GOLDMAN SACHS',  price:448.90,  changePct: 0.71 },
+        { label:'BANK OF AMERICA',price: 36.22,  changePct:-0.44 },
+        { label:'EXXON MOBIL',    price:112.67,  changePct: 0.29 },
+        { label:'GOLD ETF',       price:221.80,  changePct: 0.67 },
+        { label:'SILVER ETF',     price: 24.55,  changePct: 1.02 },
+        { label:'OIL ETF',        price: 71.30,  changePct:-0.88 },
+        { label:'BITCOIN',        price:63420.00,changePct: 2.85 },
+        { label:'ETHEREUM',       price: 3188.50,changePct: 1.94 },
+      ];
+      const html = [...fallback, ...fallback].map(i =>
+        buildTickerItem(i.label, i.price, i.change || (i.price * i.changePct / 100), i.changePct)
+      ).join('');
+      document.getElementById('liveTicker').innerHTML = html;
+    }
+  }
+
+  loadTicker();
+  // Refresh every 60 seconds
+  setInterval(loadTicker, 60000);
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        setTimeout(() => entry.target.classList.add('visible'), i * 80);
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+  reveals.forEach(el => observer.observe(el));
+
+  // Stagger cards
+  document.querySelectorAll('.features-grid .feat-card, .steps .step').forEach((el, i) => {
+    el.style.transitionDelay = (i % 4) * 0.1 + 's';
+  });
+</script>
+</body>
+</html>
